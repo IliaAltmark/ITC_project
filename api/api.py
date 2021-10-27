@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from model import get_model
 from scipy.special import softmax
 from flask import Flask, request, make_response, jsonify
-import tensorflow as tf
-
 
 
 app = Flask('Sentimental analysis')
@@ -19,7 +18,8 @@ def get_sentiment():
             pred = model.predict({k: np.array(tokenized[k])[None] for k in input_names})[0]
             scores = softmax(pred, axis=1)
 
-            return make_response(jsonify({'Sentiment': sentiments[np.argmax(scores)], 'certain': round(float(np.max(scores)), 2)}), 200)
+            return make_response(jsonify({'Sentiment': sentiments[np.argmax(scores)],
+                                          'certain': round(float(np.max(scores)), 2)}), 200)
         except Exception as ex:
             print(ex)
             return make_response(jsonify({'error': str(ex)}), 500)
